@@ -12,6 +12,7 @@ import org.springframework.data.redis.core.BoundZSetOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ZSetOperations;
 
+import java.time.Instant;
 import java.util.Set;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -56,6 +57,17 @@ public class RedisServiceImplTest {
         dto.setContent(TEST_CONTENT);
         sut.initOpsForHash();
         verify(redisTemplate, times(1)).opsForHash();
+    }
+
+    @Test
+    void shouldMakeCallToGetRangedMessages() {
+        final Instant end = Instant.now();
+        final Instant start = end.minusSeconds(172_800);
+
+        sut.setOpsForHash(boundZSetOps);
+        sut.getMessagesByTimeRange(start, end);
+
+        verify(boundZSetOps, times(1)).rangeByScore(eq((double) start.toEpochMilli()), eq((double) end.toEpochMilli()));
     }
 
     @Disabled

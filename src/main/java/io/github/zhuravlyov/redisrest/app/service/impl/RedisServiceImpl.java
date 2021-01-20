@@ -49,6 +49,11 @@ public class RedisServiceImpl implements RedisService {
         }
     }
 
+    @Override
+    public Set<String> getMessagesByTimeRange(final Instant start, final Instant end) {
+        return boundZSetOps.rangeByScore(start.toEpochMilli(), end.toEpochMilli());
+    }
+
     public void setOpsForHash(final BoundZSetOperations<String, String> boundZSetOps){
         this.boundZSetOps = boundZSetOps;
     }
