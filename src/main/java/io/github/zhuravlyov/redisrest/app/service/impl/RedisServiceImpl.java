@@ -2,9 +2,8 @@ package io.github.zhuravlyov.redisrest.app.service.impl;
 
 import io.github.zhuravlyov.redisrest.app.dto.RedisMessageDto;
 import io.github.zhuravlyov.redisrest.app.service.RedisService;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.redis.core.HashOperations;
+import org.springframework.data.redis.core.BoundZSetOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
@@ -17,20 +16,20 @@ public class RedisServiceImpl implements RedisService {
 
     private final String REDIS_HASH_PREFIX = "MSG";
     private final RedisTemplate<String, String> redisTemplate;
-    private HashOperations<String, Object, Object> opsForHash;
+    private BoundZSetOperations<String, String> boundZSetOps;
 
     @Override
     public void saveMessageToRedis(final RedisMessageDto redisMessageDto) {
-        final Instant timestamp = Instant.now();
-        opsForHash.put(REDIS_HASH_PREFIX, redisMessageDto.getContent(), "" + timestamp);
+        final double timestamp = (double) Instant.now().toEpochMilli();
+        boundZSetOps.add(redisMessageDto.getContent(), timestamp);
     }
 
     @PostConstruct
     public void initOpsForHash() {
-        setOpsForHash(redisTemplate.opsForHash());
+        setOpsForHash(redisTemplate.boundZSetOps(REDIS_HASH_PREFIX));
     }
 
-    public void setOpsForHash(HashOperations hash){
-        this.opsForHash = hash;
+    public void setOpsForHash(final BoundZSetOperations<String, String> boundZSetOps){
+        this.boundZSetOps = boundZSetOps;
     }
 }
