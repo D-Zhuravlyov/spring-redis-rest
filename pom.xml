@@ -8,14 +8,19 @@
         <version>2.4.2</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
-    <groupId>io.github.zhuravlyov.redisrest</groupId>
-    <artifactId>app</artifactId>
+
+    <groupId>io.github.zhuravlyov</groupId>
+    <artifactId>redis-rest</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>app</name>
+    <name>redis-rest</name>
     <description>Spring boot redis rest project</description>
+
     <properties>
         <java.version>11</java.version>
+        <junit.platform.version>1.7.0</junit.platform.version>
+        <junit.jupiter.version>5.7.0</junit.jupiter.version>
     </properties>
+
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -32,8 +37,31 @@
             <optional>true</optional>
         </dependency>
         <dependency>
+            <groupId>javax.validation</groupId>
+            <artifactId>validation-api</artifactId>
+            <version>2.0.1.Final</version>
+        </dependency>
+
+        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-junit-jupiter</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-engine</artifactId>
+            <version>${junit.jupiter.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.platform</groupId>
+            <artifactId>junit-platform-runner</artifactId>
+            <version>${junit.platform.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
