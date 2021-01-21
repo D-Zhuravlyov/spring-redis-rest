@@ -54,12 +54,9 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     private StringBuilder buildValidationMessage(final MethodArgumentNotValidException ex) {
         final StringBuilder message = new StringBuilder();
         for (FieldError error : ex.getBindingResult().getFieldErrors()) {
-            message.append("Argument Not Valid.");
-            message.append(System.getProperty("line.separator"));
+            message.append(" Argument Not Valid: ");
             message.append(error.getField());
-            message.append(System.getProperty("line.separator"));
-            message.append("Restricted value: ");
-            message.append(System.getProperty("line.separator"));
+            message.append(".  Restricted value: ");
             message.append(error.getRejectedValue());
         }
         return message;
