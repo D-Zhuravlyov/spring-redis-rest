@@ -3,13 +3,13 @@ package io.github.zhuravlyov.redisrest.app.service;
 import io.github.zhuravlyov.redisrest.app.dto.RedisMessageDto;
 
 import java.time.Instant;
-import java.util.Set;
+import java.util.List;
 
 public interface RedisService {
 
     void saveMessageToRedis(RedisMessageDto redisMessageDto);
 
-    Set<String> getLastMessage();
+    List<String> getLastMessage();
 
-    Set<String> getMessagesByTimeRange(Instant start, Instant end);
+    List<String> getMessagesByTimeRange(Instant start, Instant end);
 }

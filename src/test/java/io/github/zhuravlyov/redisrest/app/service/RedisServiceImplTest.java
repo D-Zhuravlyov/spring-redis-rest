@@ -2,6 +2,7 @@ package io.github.zhuravlyov.redisrest.app.service;
 
 import io.github.zhuravlyov.redisrest.app.dto.RedisMessageDto;
 import io.github.zhuravlyov.redisrest.app.service.impl.RedisServiceImpl;
+import io.github.zhuravlyov.redisrest.app.service.utils.RedisServiceUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -13,11 +14,12 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ZSetOperations;
 
 import java.time.Instant;
-import java.util.Set;
+import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.mockito.ArgumentMatchers.anyDouble;
+import static org.mockito.ArgumentMatchers.contains;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -48,15 +50,25 @@ public class RedisServiceImplTest {
         dto.setContent(TEST_CONTENT);
         sut.setOpsForHash(boundZSetOps);
         sut.saveMessageToRedis(dto);
-        verify(boundZSetOps, times(1)).add(eq(TEST_CONTENT), anyDouble());
+        verify(boundZSetOps, times(1)).add(contains(TEST_CONTENT), anyDouble());
     }
 
     @Test
-    void shouldCallRedisTemplateOpsForHash() {
+    void shouldAddUniquePrefix() {
+        final RedisMessageDto dto = new RedisMessageDto();
+        dto.setContent(TEST_CONTENT);
+        sut.setOpsForHash(boundZSetOps);
+        sut.saveMessageToRedis(dto);
+
+        verify(boundZSetOps, times(1)).add(contains(RedisServiceUtils.UNIQUENESS_DIVIDER), anyDouble());
+    }
+
+    @Test
+    void shouldCallRedisTemplateBoundZSetOps() {
         final RedisMessageDto dto = new RedisMessageDto();
         dto.setContent(TEST_CONTENT);
         sut.initOpsForHash();
-        verify(redisTemplate, times(1)).opsForHash();
+        verify(redisTemplate, times(1)).boundZSetOps(eq(MESSAGE_PREFIX));
     }
 
     @Test
@@ -78,9 +90,9 @@ public class RedisServiceImplTest {
         when(redisTemplate.opsForZSet()).thenReturn(zSetOperationsMock);
         // when(zSetOperationsMock.reverseRangeByScore(eq(MESSAGE_PREFIX), eq(Double.MIN_VALUE), eq(Double.MAX_VALUE), eq(offset), eq(count))).thenReturn(Set.of(TEST_CONTENT));
 
-        Set<String> results = sut.getLastMessage();
+        List<String> results = sut.getLastMessage();
 
         verify(redisTemplate, times(1)).opsForZSet();
-        assertThat(results, equalTo(Set.of(TEST_CONTENT)));
+        assertThat(results, equalTo(List.of(TEST_CONTENT)));
     }
 }

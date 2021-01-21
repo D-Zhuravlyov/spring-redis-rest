@@ -7,15 +7,17 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 import java.time.Instant;
-import java.util.Set;
+import java.util.List;
 
 @Log4j2
 @RequiredArgsConstructor
+@RequestMapping("/api/rest/v1/redis")
 @RestController
 public class RedisMessageController {
 
@@ -27,13 +29,13 @@ public class RedisMessageController {
     }
 
     @GetMapping("/getLast")
-    public Set<String> getLastMessage() {
+    public List<String> getLastMessage() {
         return redisService.getLastMessage();
     }
 
     @GetMapping("/getByTime")
-    public Set<String> getMessageByTime(@RequestParam Instant start,
-                                        @RequestParam Instant end) {
+    public List<String> getMessageByTime(@RequestParam Instant start,
+                                         @RequestParam Instant end) {
         return redisService.getMessagesByTimeRange(start, end);
     }
 }
